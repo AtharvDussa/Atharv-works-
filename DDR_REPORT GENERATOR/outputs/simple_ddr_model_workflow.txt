@@ -1,0 +1,26 @@
+Simple DDR Generator - Low Credit Workflow
+
+Purpose
+Convert an Inspection Report PDF and Thermal Images PDF into a client-ready DDR without spending credits on image or text extraction.
+
+Pipeline
+1. Extract text locally from both PDFs using pdfplumber.
+2. Extract or reuse embedded images locally from the PDFs.
+3. Parse the inspection summary table as the main source of truth for area-wise findings.
+4. Parse thermal pages for hotspot, coldspot, date, device, and source thermal image filename.
+5. Merge repeated findings by area/source side to avoid duplicate points.
+6. If an area-to-thermal-image match is missing, include the relevant available thermal page as support and mark exact mapping as Not Available.
+7. Generate DDR sections: summary, observations, root cause, severity, actions, notes, and missing/unclear information.
+8. Insert only selected relevant source images under matching observations.
+
+Credit-saving design
+- No vision model is required for this sample workflow.
+- No LLM call is required for deterministic fields.
+- Optional LLM use can be limited to one final summarization prompt after extraction, using only the compact structured JSON.
+
+Generalization
+For similar reports, replace the hardcoded sample mapping with:
+- regex/table extraction for summary rows,
+- image captions/photo numbers from appendix pages,
+- filename/page matching for thermal images,
+- fallback rule: when image mapping is unclear, write Image Not Available or Exact mapping Not Available.
